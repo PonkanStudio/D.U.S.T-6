@@ -13,3 +13,5 @@ local fao = 2
 local vao = 3
 
 
+local balaoColor = "blue"
+local ceuColor = "green"
