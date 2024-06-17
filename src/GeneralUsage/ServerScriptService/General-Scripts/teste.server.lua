@@ -13,5 +13,11 @@ local fao = 2
 local vao = 3
 
 
+<<<<<<< HEAD
 local balaoColor = "blue"
 local ceuColor = "green"
+=======
+local jogo = 7
+local perdi = 14
+
+>>>>>>> refs/remotes/origin/master
