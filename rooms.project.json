@@ -1,0 +1,34 @@
+{
+  "name": "D.U.S.T-6 - ROOMS",
+  "servePort": 2,
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$ignoreUnknownInstances": true,
+
+      "General-Scripts": {
+        "$path": "src/GeneralUsage/ReplicatedStorage/General-Scripts"
+      }
+    },
+
+    "ServerScriptService": {
+      "$ignoreUnknownInstances": true,
+
+      "General-Scripts": {
+        "$path": "src/GeneralUsage/ServerScriptService/General-Scripts"
+      }
+    },
+
+    "StarterPlayer": {
+      "$ignoreUnknownInstances": true,
+      "StarterCharacterScripts": {
+        "General-Scripts": {
+          "$path": "src/GeneralUsage/StarterPlayer/StarterCharacterScripts/General-Scripts"
+        }
+      }
+    }
+
+
+  }
+}

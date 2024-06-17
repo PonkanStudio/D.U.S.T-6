@@ -1,0 +1,37 @@
+{
+  "name": "D.U.S.T-6 - LOBBY",
+  "servePort": 1,
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$ignoreUnknownInstances": true,
+
+      "General-Scripts": {
+        "$path": "src/GeneralUsage/ReplicatedStorage/General-Scripts"
+      },
+      "Place-Scripts": {
+        "$path": "src/Place-Lobby/ReplicatedStorage/Place-Scripts"
+      }
+    },
+
+    "ServerScriptService": {
+      "$ignoreUnknownInstances": true,
+
+      "General-Scripts": {
+        "$path": "src/GeneralUsage/ServerScriptService/General-Scripts"
+      }
+    },
+
+    "StarterPlayer": {
+      "$ignoreUnknownInstances": true,
+      "StarterCharacterScripts": {
+        "General-Scripts": {
+          "$path": "src/GeneralUsage/StarterPlayer/StarterCharacterScripts/General-Scripts"
+        }
+      }
+    }
+
+
+  }
+}
