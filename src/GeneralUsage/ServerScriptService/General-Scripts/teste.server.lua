@@ -1,3 +1,0 @@
-print("Olá jumbo!")
-
--- comento

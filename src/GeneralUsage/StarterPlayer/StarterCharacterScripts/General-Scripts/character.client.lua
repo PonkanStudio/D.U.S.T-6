@@ -1,1 +1,0 @@
-print("O gustavo é ghei")
