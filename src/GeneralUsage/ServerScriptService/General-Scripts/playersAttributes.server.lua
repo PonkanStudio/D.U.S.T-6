@@ -3,9 +3,6 @@ local RS = game:GetService("ReplicatedStorage") -- Storage acessível pelo playe
 local SP = game:GetService("StarterPlayer") -- Starter Players Service
 local Players = game:GetService("Players") -- Get all Players
 --  </ Variables >
-local Player = Players.LocalPlayer -- Get the Player
-local Character = Player.Character or Player.CharacterAdded:Wait() -- Get the Player character or wait for it to be loaded
-local Humanoid = Character:WaitForChild("Humanoid") -- Wait for the Humanoid to be added in character
 
 -- </ Attributes >
 Players.PlayerAdded:Connect(function(player) 

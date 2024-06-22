@@ -10,9 +10,9 @@ local Humanoid = Character:WaitForChild("Humanoid") -- Wait for the Humanoid to 
 
 local lastTick = tick()
 
-local runSpeed = 24
-local crouchSpeed = 6
-local crawlSpeed = 3
+local runSpeed = 24 -- Default Runspeed
+local crouchSpeed = 6 -- Default Crouchspeed
+local crawlSpeed = 3 -- Default Crawlspeed
 
 
 local isRunning = false -- Control variable to check if player is Running
@@ -44,7 +44,6 @@ local function startCrouching()
 end
 
      -- Crawl System
-
 local function startCrawling()
     stopCustomMovement() -- Stop all custom movement player was doing
     Humanoid.WalkSpeed = crawlSpeed -- Sets the Character walkspeed to defined crawl speed
