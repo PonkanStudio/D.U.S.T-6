@@ -35,6 +35,14 @@ local crouchIdleAnimation = Instance.new("Animation")
 crouchIdleAnimation.Name = "CrouchIdleAnimation"
 crouchIdleAnimation.AnimationId = "rbxassetid://18166003513"
 
+local crawlAnimation = Instance.new("Animation")
+crawlAnimation.Name = "CrawlAnimation"
+crawlAnimation.AnimationId = "rbxassetid://18180235884"
+
+local crawlIdleAnimation = Instance.new("Animation")
+crawlIdleAnimation.Name = "CrawlIdleAnimation"
+crawlIdleAnimation.AnimationId = "rbxassetid://18180502954"
+
 
 -- </ System >
 
@@ -106,6 +114,34 @@ local function startCrawling()
     wait(.1) -- Wait some time for stopCustomMovement to finish
     Humanoid.WalkSpeed = crawlSpeed -- Sets the Character walkspeed to defined crawl speed
     isCrawling =  true -- Sets the Control variable to true after reseting it in stopCustomMovement function
+
+
+    local crawlAnimTrack = Animator:LoadAnimation(crawlAnimation) -- Loads the Crawl Animation
+    crawlAnimTrack:Play() -- Plays the Crawl Animation
+
+    local crawlIdleAnimTrack = Animator:LoadAnimation(crawlIdleAnimation) -- Loads the Idle Crawl Animation
+
+    local idlePlaying = false
+    local connection -- We create a connection to control the Heartbeat
+
+    connection = RunService.Heartbeat:Connect(function()
+        if Humanoid.MoveDirection.Magnitude == 0 and isCrawling then -- Check if the player is not moving
+            if not idlePlaying then -- Check if the Idle Animation is not playing
+                idlePlaying = true -- Sets the Control variable to true
+                crawlAnimTrack:Stop() -- Stops the Crawl Animation
+                crawlIdleAnimTrack:Play() -- Plays the Idle Crawl Animation
+            end    
+        elseif Humanoid.MoveDirection.Magnitude ~= 0 and isCrawling then -- Check if the player is moving
+            if idlePlaying then -- Check if the Idle Animation is playing
+                idlePlaying = false -- Sets the Control variable to false
+                crawlIdleAnimTrack:Stop() -- Stops the Idle Crawl Animation
+                crawlAnimTrack:Play() -- Plays the Crawl Animation
+            end
+        elseif not isCrawling then -- Check if the player is not crawling
+            stopCustomMovement() -- Calls the fuction to stop custom movement
+            connection:Disconnect() -- Disconnect the Heartbeat
+        end
+    end)
 end
 
 UIS.InputBegan:Connect(function(input,GPE) -- Get all inputs 
