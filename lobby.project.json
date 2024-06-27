@@ -28,6 +28,14 @@
       "StarterCharacterScripts": {
         "General-Scripts": {
           "$path": "src/GeneralUsage/StarterPlayer/StarterCharacterScripts/General-Scripts"
+        },
+        "Place-Scripts": {
+          "$path": "src/Place-Lobby/StarterPlayer/StarterCharacterScripts/Place-Scripts"
+        }
+      },
+      "StarterPlayerScripts": {
+        "Place-Scripts": {
+          "$path": "src/Place-Lobby/StarterPlayer/StarterPlayerScripts/Place-Scripts"
         }
       }
     }
