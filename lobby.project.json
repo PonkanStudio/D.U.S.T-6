@@ -34,6 +34,9 @@
         }
       },
       "StarterPlayerScripts": {
+        "General-Scripts": {
+          "$path": "src/GeneralUsage/StarterPlayer/StarterPlayerScripts/General-Scripts"
+        },
         "Place-Scripts": {
           "$path": "src/Place-Lobby/StarterPlayer/StarterPlayerScripts/Place-Scripts"
         }

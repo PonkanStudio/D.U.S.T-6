@@ -10,6 +10,8 @@ local Character = Player.Character or Player.CharacterAdded:Wait() -- Get the Pl
 local Humanoid = Character:WaitForChild("Humanoid") -- Wait for the Humanoid to be added in character
 local Animator = Humanoid:WaitForChild("Animator")
 
+local Events = RS:WaitForChild("Non-Scripts"):FindFirstChild("Events")
+local ChangeMovementEvent = Events:FindFirstChild("ChangeMovement")
 
 local lastTick = tick()
 
@@ -60,6 +62,8 @@ local function stopCustomMovement() -- A function to stop all the custom movemen
             anims:Stop() -- Stop the animaiton
         end
     end
+
+    ChangeMovementEvent:FireServer("Reset")
 end
     -- Run System
 local function startRunning() 
@@ -68,6 +72,7 @@ local function startRunning()
     Humanoid.WalkSpeed = runSpeed  -- Sets the Character walkspeed to 50 
     isRunning =  true -- Sets the Control variable to true after reseting it in stopCustomMovement function
 
+    ChangeMovementEvent:FireServer("Run")
     local runAnimTrack = Animator:LoadAnimation(runAnimation) -- Loads the Run Animation
     runAnimTrack:Play() -- Plays the Run Animation
 end
@@ -79,6 +84,7 @@ local function startCrouching()
     Humanoid.WalkSpeed = crouchSpeed -- Sets the Character walkspeed to defined crouch speed
     isCrouching =  true -- Sets the Control variable to true after reseting it in stopCustomMovement function
 
+    ChangeMovementEvent:FireServer("Crouch")
     local crouchAnimTrack = Animator:LoadAnimation(crouchAnimation) -- Loads the Crouch Animation
     crouchAnimTrack:Play() -- Plays the Crouch Animation
 
@@ -104,7 +110,7 @@ local function startCrouching()
             stopCustomMovement() -- Calls the fuction to stop custom movement
             connection:Disconnect() -- Disconnect the Heartbeat
         end
-end)
+    end)
 
 end
 
@@ -115,7 +121,7 @@ local function startCrawling()
     Humanoid.WalkSpeed = crawlSpeed -- Sets the Character walkspeed to defined crawl speed
     isCrawling =  true -- Sets the Control variable to true after reseting it in stopCustomMovement function
 
-
+    ChangeMovementEvent:FireServer("Crawl")
     local crawlAnimTrack = Animator:LoadAnimation(crawlAnimation) -- Loads the Crawl Animation
     crawlAnimTrack:Play() -- Plays the Crawl Animation
 
