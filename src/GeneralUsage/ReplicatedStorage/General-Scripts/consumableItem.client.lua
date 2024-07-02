@@ -33,5 +33,4 @@ end)
 Tool.Unequipped:Connect(function() -- Checks when the tool is unequipped
    ToolEquiped = false
   eatAnimTrack:Stop()
-  print(2)
 end)
