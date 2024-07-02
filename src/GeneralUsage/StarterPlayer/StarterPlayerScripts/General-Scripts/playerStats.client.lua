@@ -17,7 +17,7 @@ local ThirstBar = GUI.Thirst_Stroke.Bar
 local CTS = TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut) -- Create an tween info
 local CTS2 = TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut) -- Create an tween info
 
-
+-- TESTE
 local lastTimeHunger = tick() -- Initialize the last time player was hungry
 local lastTimeThirst = tick() -- Initialize the last time player was thirsty
 
