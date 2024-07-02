@@ -2,7 +2,7 @@
 local Players = game:GetService("Players") -- Get all Players
 local TS = game:GetService("TweenService") -- Get TweenService
 local RunService = game:GetService("RunService")
-
+local RS = game:GetService("ReplicatedStorage")
 -- </ Variables>
 local Player = Players.LocalPlayer -- Get the Player
 local Character = Player.Character or Player.CharacterAdded:Wait() -- Get Player Character or wait to be loaded
@@ -30,6 +30,7 @@ local thirstDecreasingRate = Character:GetAttribute("decreasingRate_Thirst")-- G
 local actualHunger = 100 -- Hunger Control Variable
 local actualThirst = 100 -- Thirst Control Variable
 
+local EatEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("EatEvent")
 
 local function changeBarSize(bar,barSize) -- Function to smoothly change the bar size. Size must be a number between 0 and 1
     TS:Create(bar, CTS, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on actual bar
@@ -64,3 +65,17 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
     end
 end)
 
+
+EatEvent.OnClienEvent:Connect(function(consumableName)
+    print("Você comeu: " .. consumableName)
+
+    local hungerRecovery = 10
+    local thirstRecovery = 20
+        
+    actualHunger = math.min(actualHunger + hungerRecovery, 100)
+    actualThirst = math.min(actualThirst + thirstRecovery, 100)
+        
+    changeBarSize(HungerBar, actualHunger/100)
+    changeBarSize(ThirstBar, actualThirst/100)
+
+end)
