@@ -65,17 +65,27 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
     end
 end)
 
+local consumablesValues = {
+    ["WaterBottle"] = {
+        ["Type"] = "Drink",
+        ["Recovery"] = 10
+    },
+    ["Apple"] = {
+        ["Type"] = "Eat",
+        ["Recovery"] = 20
+    }
+}
 
-EatEvent.OnClienEvent:Connect(function(consumableName)
+
+EatEvent.OnClientEvent:Connect(function(consumableName)
+    local consumable = consumablesValues[consumableName]
     print("Você comeu: " .. consumableName)
 
-    local hungerRecovery = 10
-    local thirstRecovery = 20
-        
-    actualHunger = math.min(actualHunger + hungerRecovery, 100)
-    actualThirst = math.min(actualThirst + thirstRecovery, 100)
-        
-    changeBarSize(HungerBar, actualHunger/100)
-    changeBarSize(ThirstBar, actualThirst/100)
-
+    if consumable.Type == "Eat" then
+        actualHunger = math.clamp(actualHunger + consumable.Recovery, 0, 100)
+        changeBarSize(HungerBar, actualHunger / 100)
+    elseif consumable.Type == "Drink" then
+        actualThirst = math.clamp(actualThirst + consumable.Recovery, 0, 100)
+        changeBarSize(ThirstBar, actualThirst / 100)
+    end
 end)
