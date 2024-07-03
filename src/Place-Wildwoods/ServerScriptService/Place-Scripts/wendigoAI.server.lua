@@ -1,13 +1,32 @@
 -- </ Services>
 local RS = game:GetService("ReplicatedStorage")
-
+local PathfindingService = game:GetService("PathfindingService")
 -- </ Variables>
--- local Wendigo = RS:WaitForChild("Non-Scripts"):FindFirstChild("Models"):FindFirstChild("Wendigo"):Clone()
-local Wendigo = game.Workspace:FindFirstChild("Rig")
+local Wendigo = RS:WaitForChild("Non-Scripts"):FindFirstChild("Models"):FindFirstChild("Wendigo"):Clone()
 local Humanoid = Wendigo:FindFirstChild("Humanoid")
+local HRP = Wendigo:FindFirstChild("HumanoidRootPart")
 Wendigo.Parent = game.Workspace
 
+local walkAnim = Humanoid.Animator:LoadAnimation("rbxassetid://18252546777") -- Load the Walk Animation on creature Animator
+local runAnim = Humanoid.Animator:LoadAnimation("rbxassetid://18308743403") -- Load the Run Animation on creature Animator
+
 local pathWaypoints = game.Workspace:WaitForChild("wendigoWaypoints")
+
+local pathParams = {
+    AgentHeight = 12.5,
+    AgentRadius = 3.5,
+    AgentCanJump = true
+} 
+
+local rayParams = RaycastParams.new() -- Create a list of raycast parameters
+rayParams.FilterType = Enum.RaycastFilterType.Blacklist -- Set the FilterType to blacklist
+rayParams.FilterDescendantsInstances = {Wendigo} -- Set the Wendigo and it's descendants 
+
+local lastPos = nil
+local status = nil
+local animPlaying = false
+
+local RANGE = 100 -- Set the Range of the creature finding
 
 -- </ Functions>
 -- Walk System
@@ -18,33 +37,7 @@ for _, waypoint in ipairs(pathWaypoints:GetChildren()) do
     table.insert(waypoints, waypoint.Position)
 end
 
-local lastWp = waypoints[math.random(1, #waypoints)] -- Initialize the last waypoint
 
-local prevWp = {}
-
-while true do
-    Humanoid:MoveTo(lastWp)
-    wait(.05)
-    if (Wendigo.PrimaryPart.Position - lastWp).magnitude <= 3 then
-        local closestWp = nil
-
-        for _, wp in ipairs(waypoints) do
-
-            if not table.find(prevWp, wp) then 
-                if closestWp == nil then
-                    closestWp = wp
-                else
-                    if (Wendigo.PrimaryPart.Position - wp).magnitude < (Wendigo.PrimaryPart.Position - closestWp).magnitude then
-                        closestWp = wp
-                    end
-                end
-            end
-        end
-        
-        table.insert(prevWp, lastWp)
-        if #prevWp > #waypoints - 3 then
-            table.remove(prevWp, 1)
-        end
-        lastWp = closestWp
-    end
+local function canSeeTarget()
+    local origin = Wendigo.Head
 end
