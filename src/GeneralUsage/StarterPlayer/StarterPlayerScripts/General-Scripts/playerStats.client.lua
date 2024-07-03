@@ -32,9 +32,29 @@ local actualThirst = 100 -- Thirst Control Variable
 
 local EatEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("EatEvent")
 
+local consumablesValues = {
+    ["WaterBottle"] = {
+        ["Type"] = "Drink",
+        ["Recovery"] = 10
+    },
+    ["Apple"] = {
+        ["Type"] = "Eat",
+        ["Recovery"] = 20
+    }
+}
+
+
+
+
 local function changeBarSize(bar,barSize) -- Function to smoothly change the bar size. Size must be a number between 0 and 1
-    TS:Create(bar, CTS, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on actual bar
-    TS:Create(bar.Parent.TransitionBar, CTS2, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on transition bar to get some smoothness
+    if barSize > bar.Size.X.Scale then
+        TS:Create(bar, CTS2, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on transition bar to get some smoothness
+        TS:Create(bar.Parent.TransitionBar, CTS, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on actual bar
+    else
+        TS:Create(bar, CTS, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on actual bar
+        TS:Create(bar.Parent.TransitionBar, CTS2, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on transition bar to get some smoothness
+    end
+   
 end
 
 Humanoid.HealthChanged:Connect(function(oldHealth) -- Check when the player's health changed
@@ -65,16 +85,6 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
     end
 end)
 
-local consumablesValues = {
-    ["WaterBottle"] = {
-        ["Type"] = "Drink",
-        ["Recovery"] = 10
-    },
-    ["Apple"] = {
-        ["Type"] = "Eat",
-        ["Recovery"] = 20
-    }
-}
 
 
 EatEvent.OnClientEvent:Connect(function(consumableName)
