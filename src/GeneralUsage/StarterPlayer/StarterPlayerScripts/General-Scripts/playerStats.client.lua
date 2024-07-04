@@ -29,6 +29,7 @@ local thirstDecreasingRate = Character:GetAttribute("decreasingRate_Thirst")-- G
 
 local actualHunger = 100 -- Hunger Control Variable
 local actualThirst = 100 -- Thirst Control Variable
+local actualHealth = 100 -- Health Control Variable
 
 local EatEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("EatEvent")
 
@@ -40,11 +41,14 @@ local consumablesValues = {
     ["Apple"] = {
         ["Type"] = "Eat",
         ["Recovery"] = 20
+    },
+    ["Meds"] = {
+        ["Type"] = "Cure",
+        ["Recovery"] = "15"
     }
 }
 
-
-
+----------------------------------------------------------------------------
 
 local function changeBarSize(bar,barSize) -- Function to smoothly change the bar size. Size must be a number between 0 and 1
     if barSize > bar.Size.X.Scale then
@@ -86,16 +90,18 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
 end)
 
 
-
-EatEvent.OnClientEvent:Connect(function(consumableName)
+EatEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the Eat Event
     local consumable = consumablesValues[consumableName]
-    print("Você comeu: " .. consumableName)
+    print("Você usou: " .. consumableName) -- Print for tracking
 
-    if consumable.Type == "Eat" then
-        actualHunger = math.clamp(actualHunger + consumable.Recovery, 0, 100)
-        changeBarSize(HungerBar, actualHunger / 100)
-    elseif consumable.Type == "Drink" then
-        actualThirst = math.clamp(actualThirst + consumable.Recovery, 0, 100)
-        changeBarSize(ThirstBar, actualThirst / 100)
+    if consumable.Type == "Eat" then -- Check if the consumables type is 'Eat'
+        actualHunger = math.clamp(actualHunger + consumable.Recovery, 0, 100) -- Updates the 'actualHunger' valor
+        changeBarSize(HungerBar, actualHunger / 100) -- Modifies the size of the bar related to 'Hunger'
+    elseif consumable.Type == "Drink" then -- Check if the consumables type is 'Drink'
+        actualThirst = math.clamp(actualThirst + consumable.Recovery, 0, 100) -- Updates the 'actualThirst' valor
+        changeBarSize(ThirstBar, actualThirst / 100) -- Modifies the size of the bar related to 'Thirst'
+    elseif consumable.Type == "Cure" then -- Check if the consumables type is 'Cure'
+        actualHealth = math.clamp(actualHealth + consumable.Recovery, 0, 100) -- Updates the 'actualHealth' valor
+        changeBarSize(HealthBar, actualHealth / 100) -- Modifies the size of the bar related to 'Health'
     end
 end)
