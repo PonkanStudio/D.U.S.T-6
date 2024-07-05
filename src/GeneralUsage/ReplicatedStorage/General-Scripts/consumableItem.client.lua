@@ -10,7 +10,7 @@ local Character = Player.Character or Player.CharacterAdded:Wait() -- Get the pl
 local Humanoid = Character:WaitForChild("Humanoid")
 local Animator = Humanoid:WaitForChild("Animator")
 local Events = RS:WaitForChild("Non-Scripts"):WaitForChild("Events") -- Get the Events Folder
-local EatEvent = Events:WaitForChild("EatEvent")
+local EatEvent = Events:WaitForChild("cosumableEvent")
 local Animation = Tool:FindFirstChild("usageAnimation") -- Get the consumable animation
 
 local ToolEquiped = false

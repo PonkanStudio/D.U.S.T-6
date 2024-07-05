@@ -31,7 +31,7 @@ local actualHunger = 100 -- Hunger Control Variable
 local actualThirst = 100 -- Thirst Control Variable
 local actualHealth = 100 -- Health Control Variable
 
-local EatEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("EatEvent")
+local cosumableEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("cosumableEvent")
 
 local consumablesValues = {
     ["WaterBottle"] = {
@@ -90,7 +90,7 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
 end)
 
 
-EatEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the Eat Event
+cosumableEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the Eat Event
     local consumable = consumablesValues[consumableName]
     print("Você usou: " .. consumableName) -- Print for tracking
 
@@ -100,8 +100,5 @@ EatEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the Eat Ev
     elseif consumable.Type == "Drink" then -- Check if the consumables type is 'Drink'
         actualThirst = math.clamp(actualThirst + consumable.Recovery, 0, 100) -- Updates the 'actualThirst' valor
         changeBarSize(ThirstBar, actualThirst / 100) -- Modifies the size of the bar related to 'Thirst'
-    elseif consumable.Type == "Cure" then -- Check if the consumables type is 'Cure'
-        actualHealth = math.clamp(actualHealth + consumable.Recovery, 0, 100) -- Updates the 'actualHealth' valor
-        changeBarSize(HealthBar, actualHealth / 100) -- Modifies the size of the bar related to 'Health'
     end
 end)

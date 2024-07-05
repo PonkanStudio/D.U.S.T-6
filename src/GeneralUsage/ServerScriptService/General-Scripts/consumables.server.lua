@@ -6,12 +6,21 @@ local Workspace = game:GetService("Workspace")
 
 -- </ Variables>
 local Events = RS:WaitForChild("Non-Scripts"):FindFirstChild("Events") -- Get the Events folder
-local EatEvent = Events:WaitForChild("EatEvent") -- Get the Eat Event
+local cosumableEvent = Events:WaitForChild("cosumableEvent") -- Get the Eat Event
 
 
 local ConsumablesFolder = RS:WaitForChild("Non-Scripts"):FindFirstChild("Cosumables") -- Get the Consumables Folder, which contains all the consumables items
 local ConsumableLocations = game.Workspace:FindFirstChild("Consumables_Location") --  Get the Cosumable Locations to clone the consumables
 local onGameConsumables = game.Workspace:FindFirstChild("Consumables_OnGame") -- Folder to contain the consumables
+
+
+
+local consumablesValues = {
+    ["Meds"] = {
+        ["Type"] = "Cure",
+        ["Recovery"] = "15"
+    }
+}
 
 
 for k, locationPart in pairs(ConsumableLocations:GetChildren()) do -- Iterate through all the Cosumable Locations
@@ -38,7 +47,12 @@ for k, locationPart in pairs(ConsumableLocations:GetChildren()) do -- Iterate th
 
 end
 
-EatEvent.OnServerEvent:Connect(function(Player, Consumable) -- Listen for the Eat Event
-    EatEvent:FireClient(Player, Consumable.Name)
+cosumableEvent.OnServerEvent:Connect(function(Player, Consumable) -- Listen for the Eat Event
+    if consumablesValues[Consumable.Name] then -- That means the consumable is a "Cure"
+        Player.Character:FindFirstChild("Humanoid").Health += consumablesValues[Consumable.Name].Recovery
+    else
+        cosumableEvent:FireClient(Player, Consumable.Name)
+    end
+    
     Consumable:Destroy()
 end)
