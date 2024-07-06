@@ -4,5 +4,6 @@ Players.PlayerAdded:Connect(function(Player)
     Player.CharacterAdded:Connect(function(Character)
         Character:SetAttribute("decreasingRate_Hunger", 2) -- Sets the default hunger decreasing rate to 2
         Character:SetAttribute("decreasingRate_Thirst", 1) -- Sets the default thirst decreasing rate to 1
+        Character:SetAttribute("decreasingRate_Charge", 1)
     end)
 end)

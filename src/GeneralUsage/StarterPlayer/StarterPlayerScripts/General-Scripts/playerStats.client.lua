@@ -3,6 +3,7 @@ local Players = game:GetService("Players") -- Get all Players
 local TS = game:GetService("TweenService") -- Get TweenService
 local RunService = game:GetService("RunService")
 local RS = game:GetService("ReplicatedStorage")
+
 -- </ Variables>
 local Player = Players.LocalPlayer -- Get the Player
 local Character = Player.Character or Player.CharacterAdded:Wait() -- Get Player Character or wait to be loaded
@@ -13,6 +14,7 @@ local GUI = Player.PlayerGui:WaitForChild("StatsBar") -- Get the bars GUI
 local HealthBar = GUI.Health_Stroke.Bar 
 local HungerBar = GUI.Hunger_Stroke.Bar
 local ThirstBar = GUI.Thirst_Stroke.Bar
+local FlashlightBar = GUI.Flashlight_Stroke.Bar
 
 local CTS = TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut) -- Create an tween info
 local CTS2 = TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut) -- Create an tween info
@@ -20,16 +22,19 @@ local CTS2 = TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection
 -- TESTE
 local lastTimeHunger = tick() -- Initialize the last time player was hungry
 local lastTimeThirst = tick() -- Initialize the last time player was thirsty
+local lastTimeCharge = tick()
 
 local waitTimeHunger = math.random(3, 7) -- Initialize the wait time for the player to be hungry
 local waitTimeThirst = math.random(3, 6) -- Initialize the wait time for the player to be thirsty
+local waitTimeCharge = math.random(3, 7)
 
 local hungerDecreasingRate = Character:GetAttribute("decreasingRate_Hunger") -- Get the Hunger decreasing rate as the initial value
 local thirstDecreasingRate = Character:GetAttribute("decreasingRate_Thirst")-- Get the Thirst decreasing rate as the initial value
+local chargeDecreasingRate = Character:GetAttribute("decreasingRate_Charge")
 
 local actualHunger = 100 -- Hunger Control Variable
 local actualThirst = 100 -- Thirst Control Variable
-local actualHealth = 100 -- Health Control Variable
+local actualCharge = 100
 
 local cosumableEvent = RS:WaitForChild("Non-Scripts"):WaitForChild("Events"):WaitForChild("cosumableEvent")
 
@@ -42,9 +47,9 @@ local consumablesValues = {
         ["Type"] = "Eat",
         ["Recovery"] = 20
     },
-    ["Meds"] = {
-        ["Type"] = "Cure",
-        ["Recovery"] = "15"
+    ["Battery"] = {
+        ["Type"] = "Charge",
+        ["Recovery"] = 20
     }
 }
 
@@ -87,6 +92,13 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
         waitTimeThirst = math.random(3, 6) -- Reset the thirst waiting time
         lastTimeThirst = tick() -- Reset the hunger last time
     end
+    
+    if (tick() - lastTimeCharge) >= waitTimeCharge * chargeDecreasingRate then -- Yet to change, provisional
+        actualCharge -= 1
+        changeBarSize(FlashlightBar, actualCharge/100)
+        waitTimeCharge = math.random(3, 6)
+        lastTimeCharge = tick()
+    end
 end)
 
 
@@ -100,5 +112,8 @@ cosumableEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the 
     elseif consumable.Type == "Drink" then -- Check if the consumables type is 'Drink'
         actualThirst = math.clamp(actualThirst + consumable.Recovery, 0, 100) -- Updates the 'actualThirst' valor
         changeBarSize(ThirstBar, actualThirst / 100) -- Modifies the size of the bar related to 'Thirst'
+    elseif consumable.Type == "Charge" then -- Check if the consumables type is 'Drink'
+        actualCharge = math.clamp(actualCharge + consumable.Recovery, 0, 100) -- Updates the 'actualThirst' valor
+        changeBarSize(FlashlightBar, actualCharge/ 100) -- Modifies the size of the bar related to 'Thirst'
     end
 end)
