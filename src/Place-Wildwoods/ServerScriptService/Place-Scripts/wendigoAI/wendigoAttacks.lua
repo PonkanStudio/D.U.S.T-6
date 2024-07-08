@@ -6,7 +6,7 @@ function wendigoAttacks.GrabPlayer(target)
     print("Depois")
 end
 
-function wendigoAttacks.GrabPlayer(target)
+function wendigoAttacks.GrabPlayer2(target)
     print("Gravou2")
     task.wait(3)
     print("Depoi3s3")

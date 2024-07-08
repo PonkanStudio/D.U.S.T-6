@@ -8,8 +8,11 @@ local RS = game:GetService("ReplicatedStorage")
 local PathfindingService = game:GetService("PathfindingService")
 local Players = game:GetService("Players")
 local Debris = game:GetService("Debris")
--- </ Variables>
+-- </ Modules>
 local wendigoAttacks = require(script.wendigoAttacks) -- We require the wendigo attacks module
+local generalFunction = require(RS:WaitForChild("General-Scripts"):FindFirstChild("generalFunctions"))
+-- </ Variables>
+
 
 local Wendigo = RS:WaitForChild("Non-Scripts"):FindFirstChild("Models"):FindFirstChild("Wendigo"):Clone()
 
@@ -85,7 +88,8 @@ local function attack(target)
     else
         if not debounce then
             debounce = true
-            wendigoAttacks[math.random(1, #wendigoAttacks)](target)
+            print(wendigoAttacks)
+            wendigoAttacks[generalFunction.getRamInDict(wendigoAttacks)](target)
             debounce = false
         end
     end
@@ -107,27 +111,7 @@ local function canSeeTarget(target)
 		return false
 	end
 end
- 
 
-local function findTarget()
-	local players = game.Players:GetPlayers()
-	local maxDistance = RANGE
-	local nearestTarget
- 
-	for i, player in pairs(players) do
-		if player.Character then
-			local target = player.Character
-			local distance = (hrp.Position - target.HumanoidRootPart.Position).Magnitude
- 
-			if distance < maxDistance and canSeeTarget(target) then
-				nearestTarget = target
-				maxDistance = distance
-			end
-		end
-	end
- 
-	return nearestTarget
-end
 
 local function findNearestTarget()
     local origin = Wendigo.Head
@@ -173,100 +157,150 @@ local function findPath(destination)
         end
 end
 
-
 local function moveTo(destination)
-    local path = findPath(destination)
+    local target = findNearestTarget()
 
-    if path and path.Status == Enum.PathStatus.Success then -- If we found a path to the destination
-        for _, waypoint in ipairs(path:GetWaypoints()) do
-            path.Blocked:Connect(function() -- If the path is blocked we destroy the path avoiding a infinite loop
-                path:Destroy()
-            end)
+    local path 
+    if target and target.Humanoid.Health > 0 then
+        path = findPath(target.HumanoidRootPart)
+    else
+        path = findPath(destination)
+    end
 
-            local target = findTarget()
-            if target and target.Humanoid.Health > 0 then -- We found a Player, ALIVE, within the creature range
-                if target:GetAttribute("OSWall") then -- We found a Player that is on the otherside of a wall
-                    if tick() - lastTimeHiding > 30 then
-                        hidingPlayer(target)
+    if path and path.Status == Enum.PathStatus.Success then    
+        print(2)
+        path.Blocked:Connect(function() -- If the path is blocked we destroy the path avoiding a infinite loop
+            path:Destroy()
+        end)
+
+        for k,waypoint in ipairs(path:GetWaypoints()) do
+            if k > 1 then
+                local part = Instance.new("Part",game.Workspace)
+                part.CanCollide = false
+                part.Anchored = true
+                part.Material = Enum.Material.Neon
+                part.Color = Color3.fromRGB(0, 255, 0)
+                part.Position = waypoint.Position
+                part.Size = Vector3.new(0.5, 0.5, 0.5)
+                Debris:AddItem(part,1)
+    
+                if target and target.Humanoid.Health > 0 then
+                    if waypoint.Action == Enum.PathWaypointAction.Jump then
+                        Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
                     end
-                end
-
-                
-                if walkAnimPlaying then
-                    walkAnimTrack:Stop()
-                    runAnimTrack:Play()
-                    Wendigo.Humanoid.WalkSpeed = 32
-                    walkAnimPlaying = false
-                    runAnimPlaying = true
-                end
-
-                lastPos = target.HumanoidRootPart.Position
-                attack(target)
-            else -- Failed to find a Player within the creature range
-                if walkAnimPlaying == false then
-                    walkAnimTrack:Play()
-                    runAnimTrack:Stop()
-                    walkAnimPlaying = true
-                    runAnimPlaying = false
-                    Wendigo.Humanoid.WalkSpeed = 8
-                end
-
-                if waypoint.Action == Enum.PathWaypointAction.Jump then
-                    Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-                end
-
-                if lastPos then
-                    Humanoid:MoveTo(lastPos)
-                    Humanoid.MoveToFinished:Wait()
-                    lastPos = nil
-                    break
-                else
+    
+                    
                     Humanoid:MoveTo(waypoint.Position)
                     Humanoid.MoveToFinished:Wait()
-                end
-            end 
+
+                    if target:GetAttribute("OSWall") then
+                        print("Hiding")
+                    else
+                        print("Normal")
+                    end
+                    if (target.HumanoidRootPart.Position - waypoint.Position).magnitude > 6.5 then
+                        print((target.HumanoidRootPart.Position - waypoint.Position).magnitude)
+                        break
+                    end
+                else
+                    if waypoint.Action == Enum.PathWaypointAction.Jump then
+                        Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                    end
+
+                    Humanoid:MoveTo(waypoint.Position)
+                    Humanoid.MoveToFinished:Wait()
+                    break
+                end  
+            end
+            
+
         end
     end
 end
 
--- local function patrol()
-    
+-- local function moveTo(destination)
+--     local path = findPath(destination)
+
+--     if path and path.Status == Enum.PathStatus.Success then -- If we found a path to the destination
+--         for _, waypoint in ipairs(path:GetWaypoints()) do
+--             path.Blocked:Connect(function() -- If the path is blocked we destroy the path avoiding a infinite loop
+--                 path:Destroy()
+--             end)
+
+--             local part = Instance.new("Part",game.Workspace)
+--             part.Anchored = true
+--             part.Material = Enum.Material.Neon
+--             part.Color = Color3.fromRGB(0, 255, 0)
+--             part.Position = waypoint.Position
+--             part.Size = Vector3.new(0.5, 0.5, 0.5)
+--             Debris:AddItem(part,1)
+
+--             local target = findTarget()
+--             if target and target.Humanoid.Health > 0 then -- We found a Player, ALIVE, within the creature range
+--                 if target:GetAttribute("OSWall") then -- We found a Player that is on the otherside of a wall
+--                     if tick() - lastTimeHiding > 30 then
+--                         hidingPlayer(target)
+--                     end
+--                 end
+
+                
+--                 if walkAnimPlaying then
+--                     walkAnimTrack:Stop()
+--                     runAnimTrack:Play()
+--                     Wendigo.Humanoid.WalkSpeed = 32
+--                     walkAnimPlaying = false
+--                     runAnimPlaying = true
+--                 end
+
+--                 lastPos = target.HumanoidRootPart.Position
+--                 attack(target)
+--             else -- Failed to find a Player within the creature range
+--                 if walkAnimPlaying == false then
+--                     walkAnimTrack:Play()
+--                     runAnimTrack:Stop()
+--                     walkAnimPlaying = true
+--                     runAnimPlaying = false
+--                     Wendigo.Humanoid.WalkSpeed = 8
+--                 end
+
+--                 if waypoint.Action == Enum.PathWaypointAction.Jump then
+--                     Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+--                 end
+
+--                 if lastPos then
+--                     Humanoid:MoveTo(lastPos)
+--                     Humanoid.MoveToFinished:Wait()
+--                     lastPos = nil
+--                     break
+--                 else
+--                     Humanoid:MoveTo(waypoint.Position)
+--                     Humanoid.MoveToFinished:Wait()
+--                 end
+--             end 
+--         end
+--     end
 -- end
-
--- while task.wait(0.05) do
-
---     local nearestPlayer = canSeePlayer()
-
---     moveTo(nearestPlayer)
-
--- end
-
- 
- 
--- local function attack(target)
--- 	local distance = (hrp.Position - target.HumanoidRootPart.Position).Magnitude
--- 	local debounce = false
- 
--- 	if distance > 6.5 then
--- 		Humanoid:MoveTo(target.HumanoidRootPart.Position)
--- 	else
--- 		if debounce == false then
--- 			debounce = true
- 
--- 			target.Humanoid.Health -= 30
--- 			task.wait(0.5)
--- 			debounce = false
--- 		end
--- 	end
--- end
- 
  
 local function patrol()
 	local waypoints = workspace.Waypoints:GetChildren()
 	local randomNum = math.random(1, #waypoints)
-	moveTo(waypoints[randomNum])
+
+    
+    if not lastWp then
+        lastWp = waypoints[randomNum]
+        moveTo(waypoints[randomNum])
+    else
+        if (HRP.Position - lastWp.Position).magnitude > 6.5 then
+            moveTo(lastWp)
+        else
+            lastWp = waypoints[randomNum]
+            moveTo(waypoints[randomNum])
+        end
+    end
+
+	
 end
  
-while task.wait(0.05) do
+while task.wait() do
 	patrol()
 end
