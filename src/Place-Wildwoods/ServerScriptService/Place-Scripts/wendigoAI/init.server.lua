@@ -279,10 +279,17 @@ local function findPath(destination)
     local path = PathfindingService:CreatePath(pathParams)
 
     local success, _ = pcall(function()
-        path:ComputeAsync(Wendigo.HumanoidRootPart.Position, destination.Position)
+        -- path:ComputeAsync(Wendigo.HumanoidRootPart.Position, destination.Position)
+        path:ComputeAsync(Wendigo.RightFoot.Position, destination.Position)
+        -- path:ComputeAsync(Wendigo.PrimaryPart.Position - Vector3.new(0, Wendigo.PrimaryPart.Size.Y/0.75, 0), destination)
     end)
 
-    return success and path or nil
+    if success then
+        print("A")
+        return path
+    else
+        print("B")
+    end
 end
 
 local waypointsFolder = Instance.new("Folder", Wendigo)
@@ -306,16 +313,24 @@ local function walkTo(destination)
             p.Material = Enum.Material.Neon
         end
 
+
         for i, waypoint in ipairs(path:GetWaypoints()) do
-            if i == 1 then continue end
+            if i == 1 then
+                continue 
+            end
 
             Humanoid:MoveTo(waypoint.Position)
+            print(waypoint.Action)
+            if waypoint.Action == Enum.PathWaypointAction.Jump then
+                Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+            end
+
             if (target and lastPos ~= destination.Position) or (not target and findNearestTarget()) then
                 lastWp = nil
                 lastPos = nil
                 return
             end
-            Humanoid.MoveToFinished:Wait()
+            Humanoid.MoveToFinished:Wait(1)
         end
     end
     lastWp = nil
