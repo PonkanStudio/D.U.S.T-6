@@ -4,6 +4,7 @@ local RunService = game:GetService("RunService")
 local SP = game:GetService("StarterPlayer") -- Starter Players Service
 local Players = game:GetService("Players") -- Get all Players
 local UIS = game:GetService("UserInputService") -- Get the User Input Service that allow us to check the player inputs
+local TS = game:GetService("TweenService")
 --  </ Variables >
 local Player = Players.LocalPlayer -- Get the Player
 local Character = Player.Character or Player.CharacterAdded:Wait() -- Get the Player character or wait for it to be loaded
@@ -19,6 +20,9 @@ local runSpeed = 24 -- Default Runspeed
 local crouchSpeed = 5 -- Default Crouchspeed
 local crawlSpeed = 2 -- Default Crawlspeed
 
+local LTS = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut) -- Create an tween info
+
+local camera = workspace.CurrentCamera
 
 local isRunning = false -- Control variable to check if player is Running
 local isCrouching = false -- Control variable to check if player is Crouching
@@ -27,7 +31,7 @@ local isCrawling = false -- Control variable to check if player is Crawling
 
 local runAnimation = Instance.new("Animation")
 runAnimation.Name = "RunAnimation"
-runAnimation.AnimationId = "rbxassetid://18166081332"
+runAnimation.AnimationId = "rbxassetid://18519959877"
 
 local crouchAnimation = Instance.new("Animation")
 crouchAnimation.Name = "CrouchAnimation"
@@ -62,7 +66,7 @@ local function stopCustomMovement() -- A function to stop all the custom movemen
             anims:Stop() -- Stop the animaiton
         end
     end
-
+    TS:Create(camera, LTS, {FieldOfView = 70}):Play()
     ChangeMovementEvent:FireServer("Reset")
 end
     -- Run System
@@ -72,6 +76,7 @@ local function startRunning()
     Humanoid.WalkSpeed = runSpeed  -- Sets the Character walkspeed to 50 
     isRunning =  true -- Sets the Control variable to true after reseting it in stopCustomMovement function
 
+    TS:Create(camera, LTS, {FieldOfView = 90}):Play()
     ChangeMovementEvent:FireServer("Run")
     local runAnimTrack = Animator:LoadAnimation(runAnimation) -- Loads the Run Animation
     runAnimTrack:Play() -- Plays the Run Animation
