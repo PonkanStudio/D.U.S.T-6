@@ -1,5 +1,6 @@
 -- </ Services>
 local Players = game:GetService("Players") -- Get all Players
+local StarterPlayer = game:GetService("StarterPlayer")
 local TS = game:GetService("TweenService") -- Get TweenService
 local RunService = game:GetService("RunService")
 local RS = game:GetService("ReplicatedStorage")
@@ -63,7 +64,6 @@ local function changeBarSize(bar,barSize) -- Function to smoothly change the bar
         TS:Create(bar, CTS, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on actual bar
         TS:Create(bar.Parent.TransitionBar, CTS2, {Size = UDim2.new(barSize, 0 , 1, 0)}):Play() -- Play the tween on transition bar to get some smoothness
     end
-   
 end
 
 Humanoid.HealthChanged:Connect(function(oldHealth) -- Check when the player's health changed
@@ -89,15 +89,8 @@ RunService.Heartbeat:Connect(function() -- Get every Heartbeat time interval
     if (tick() - lastTimeThirst) >= waitTimeThirst * thirstDecreasingRate then -- Check if enough time has passed since the last time the player was thirsty
         actualThirst -= 1 -- Decrease the actual thirst
         changeBarSize(ThirstBar, actualThirst/100) -- Change the bar size
-        waitTimeThirst = math.random(3, 6) -- Reset the thirst waiting time
+        waitTimeThirst  =math.random(3, 6) -- Reset the thirst waiting time
         lastTimeThirst = tick() -- Reset the hunger last time
-    end
-    
-    if (tick() - lastTimeCharge) >= waitTimeCharge * chargeDecreasingRate then -- Yet to change, provisional
-        actualCharge -= 1
-        changeBarSize(FlashlightBar, actualCharge/100)
-        waitTimeCharge = math.random(3, 6)
-        lastTimeCharge = tick()
     end
 end)
 
@@ -117,3 +110,39 @@ cosumableEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the 
         changeBarSize(FlashlightBar, actualCharge/ 100) -- Modifies the size of the bar related to 'Thirst'
     end
 end)
+
+local FlashlightOn = false
+
+local flashlightToggleEvent = RS:WaitForChild("FlashlightToggleEvent")
+local FlashlightModule = RS:WaitForChild("General-Scripts"):FindFirstChild("FlashlightModule")
+
+if not FlashlightModule then
+    warn("FlashlightModule não encontrado em ReplicatedStorage.")
+    return
+end
+
+
+local function OnFlashlightToggled(state)
+    FlashlightOn = state
+    print("O evento de alternância da lanterna foi acionado!")
+    if FlashlightOn then
+        local function consumeCharge()
+            while FlashlightOn and FlashlightModule.actualCharge > 0 do
+                if (tick() - lastTimeCharge) >= waitTimeCharge then
+                    FlashlightModule.actualCharge -= chargeDecreasingRate
+                    changeBarSize(FlashlightBar, FlashlightModule.actualCharge / 100)
+                    waitTimeCharge = math.random(3, 6)
+                    lastTimeCharge = tick()
+                    if FlashlightModule.actualCharge <= 0 then
+                        flashlightToggleEvent:Fire(false)
+                        break
+                    end
+                end
+                wait(1) 
+            end
+        end
+        consumeCharge()
+    end
+end
+
+flashlightToggleEvent.Event:Connect(OnFlashlightToggled)
