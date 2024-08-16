@@ -15,7 +15,7 @@ local GUI = Player.PlayerGui:WaitForChild("StatsBar") -- Get the bars GUI
 local HealthBar = GUI.Health_Stroke.Bar 
 local HungerBar = GUI.Hunger_Stroke.Bar
 local ThirstBar = GUI.Thirst_Stroke.Bar
-local FlashlightBar = GUI.Flashlight_Stroke.Bar
+-- local FlashlightBar = GUI.Flashlight_Stroke.Bar
 
 local CTS = TweenInfo.new(.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut) -- Create an tween info
 local CTS2 = TweenInfo.new(1, Enum.EasingStyle.Exponential, Enum.EasingDirection.InOut) -- Create an tween info
@@ -111,38 +111,3 @@ cosumableEvent.OnClientEvent:Connect(function(consumableName) -- Listen for the 
     end
 end)
 
-local FlashlightOn = false
-
-local flashlightToggleEvent = RS:WaitForChild("FlashlightToggleEvent")
-local FlashlightModule = RS:WaitForChild("General-Scripts"):FindFirstChild("FlashlightModule")
-
-if not FlashlightModule then
-    warn("FlashlightModule não encontrado em ReplicatedStorage.")
-    return
-end
-
-
-local function OnFlashlightToggled(state)
-    FlashlightOn = state
-    print("O evento de alternância da lanterna foi acionado!")
-    if FlashlightOn then
-        local function consumeCharge()
-            while FlashlightOn and FlashlightModule.actualCharge > 0 do
-                if (tick() - lastTimeCharge) >= waitTimeCharge then
-                    FlashlightModule.actualCharge -= chargeDecreasingRate
-                    changeBarSize(FlashlightBar, FlashlightModule.actualCharge / 100)
-                    waitTimeCharge = math.random(3, 6)
-                    lastTimeCharge = tick()
-                    if FlashlightModule.actualCharge <= 0 then
-                        flashlightToggleEvent:Fire(false)
-                        break
-                    end
-                end
-                wait(1) 
-            end
-        end
-        consumeCharge()
-    end
-end
-
-flashlightToggleEvent.Event:Connect(OnFlashlightToggled)
